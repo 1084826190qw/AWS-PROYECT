@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Sales System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0d12;
+      --bg-secondary: #11161e;
+      --bg-card: #161c26;
+      --bg-card-hover: #1c2430;
+      --border: #1e293b;
+      --text-primary: #e8edf5;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --accent-glow: rgba(59, 130, 246, 0.15);
+      --green: #22c55e;
+      --blue: #3b82f6;
+      --cyan: #06b6d4;
+      --purple: #8b5cf6;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --radius: 12px;
+      --radius-lg: 20px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+
+    /* ── Navigation ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 16px 40px;
+      background: rgba(10, 13, 18, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled {
+      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--text-primary);
+    }
+
+    .nav-brand i {
+      color: var(--accent);
+      font-size: 1.4rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 40%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 60%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent-hover);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 32px;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .hero-badge i {
+      font-size: 0.7rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #f0f4ff 0%, #94b8ff 50%, #60a5fa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      animation: fadeInUp 0.8s ease 0.1s both;
+    }
+
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      font-weight: 400;
+      animation: fadeInUp 0.8s ease 0.2s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeInUp 0.8s ease 0.3s both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 30px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.25s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 6px 28px rgba(59, 130, 246, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--text-muted);
+      font-size: 1.4rem;
+      animation: bounce 2s infinite;
+    }
+
+    /* ── Sections common ── */
+    section {
+      padding: 100px 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── Services Grid ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+    }
+
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+
+    .service-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      background: var(--bg-card-hover);
+    }
+
+    .service-card .icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.5rem;
+      transition: transform 0.3s;
+    }
+
+    .service-card:hover .icon {
+      transform: scale(1.1);
+    }
+
+    .service-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .service-card p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .icon-nginx { background: rgba(0, 153, 0, 0.12); color: #00cc44; }
+    .icon-php    { background: rgba(119, 77, 179, 0.12); color: #8892bf; }
+    .icon-node   { background: rgba(60, 153, 110, 0.12); color: #3cc573; }
+    .icon-mysql  { background: rgba(0, 117, 143, 0.12); color: #00758f; }
+    .icon-postgres { background: rgba(51, 103, 145, 0.12); color: #336791; }
+    .icon-docker { background: rgba(13, 133, 186, 0.12); color: #0db7ed; }
+
+    /* ── Features ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(59, 130, 246, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transform: translateY(-4px);
+    }
+
+    .feature-card .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 18px;
+    }
+
+    .feature-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .feat-blue  { background: rgba(59, 130, 246, 0.1); color: var(--accent); }
+    .feat-green { background: rgba(34, 197, 94, 0.1); color: var(--green); }
+    .feat-cyan  { background: rgba(6, 182, 212, 0.1); color: var(--cyan); }
+    .feat-purple { background: rgba(139, 92, 246, 0.1); color: var(--purple); }
+    .feat-orange { background: rgba(245, 158, 11, 0.1); color: var(--orange); }
+    .feat-red   { background: rgba(239, 68, 68, 0.1); color: var(--red); }
+
+    /* ── Architecture Diagram ── */
+    .arch-section {
+      background: var(--bg-secondary);
+    }
+
+    .arch-diagram {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .arch-node {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 40px;
+      text-align: center;
+      min-width: 200px;
+      transition: all 0.3s;
+    }
+
+    .arch-node:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 24px var(--accent-glow);
+    }
+
+    .arch-node i {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .arch-node .label {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .arch-node .sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .arch-arrow {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      padding: 8px 0;
+      opacity: 0.6;
+    }
+
+    .arch-split {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .arch-split .arch-node {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .arch-merge {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .arch-merge .arch-node {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .arch-line {
+      width: 2px;
+      height: 28px;
+      background: linear-gradient(to bottom, var(--border), transparent);
+    }
+
+    /* ── Stats ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.25);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-card .number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .stat-card .label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    .stat-card i {
+      font-size: 1.6rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 24px 32px;
+      text-align: center;
+    }
+
+    footer .footer-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    footer .brand {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+
+    footer .brand i {
+      color: var(--accent);
+    }
+
+    footer .tagline {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+
+    footer .footer-icons {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 24px;
+    }
+
+    footer .footer-icons .item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer .footer-icons .item i {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+    }
+
+    footer .copy {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      nav {
+        padding: 14px 20px;
+      }
+      .nav-links {
+        display: none;
+      }
+      section {
+        padding: 64px 18px;
+      }
+      .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 14px;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .arch-split, .arch-merge {
+        flex-direction: column;
+        align-items: center;
+      }
+      .arch-split .arch-node,
+      .arch-merge .arch-node {
+        width: 100%;
+        max-width: 280px;
+      }
+      .hero h1 {
+        font-size: clamp(2rem, 10vw, 3rem);
+      }
+      footer .footer-icons {
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav id="navbar">
+    <div class="nav-brand">
+      <i class="fas fa-car"></i>
+      <span>VSS</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#services">Servicios</a></li>
+      <li><a href="#features">Características</a></li>
+      <li><a href="#architecture">Arquitectura</a></li>
+      <li><a href="#stats">Estadísticas</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-badge">
+      <i class="fas fa-circle" style="font-size:0.5rem;vertical-align:middle"></i>
+      Proyecto Académico · AWS EC2
+    </div>
+    <h1>Vehicle Sales System</h1>
+    <p>Plataforma de gestión y administración de ventas de vehículos</p>
+    <div class="hero-actions">
+      <a href="#services" class="btn btn-primary">
+        Explorar <i class="fas fa-arrow-down"></i>
+      </a>
+      <a href="#architecture" class="btn btn-outline">
+        <i class="fas fa-diagram-project"></i> Arquitectura
+      </a>
+    </div>
+    <div class="hero-scroll">
+      <i class="fas fa-chevron-down"></i>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Servicios del Ecosistema</h2>
+        <p>Tecnologías que impulsan la plataforma</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="icon icon-nginx"><i class="fas fa-server"></i></div>
+          <h3>Nginx</h3>
+          <p>Proxy inverso</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="icon icon-php"><i class="fab fa-php"></i></div>
+          <h3>PHP</h3>
+          <p>Backend Apache</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="icon icon-node"><i class="fab fa-node-js"></i></div>
+          <h3>Node.js</h3>
+          <p>API REST</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="icon icon-mysql"><i class="fas fa-database"></i></div>
+          <h3>MySQL</h3>
+          <p>Base de datos</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="icon icon-postgres"><i class="fas fa-database"></i></div>
+          <h3>PostgreSQL</h3>
+          <p>Base de datos</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="icon icon-docker"><i class="fab fa-docker"></i></div>
+          <h3>Docker</h3>
+          <p>Contenedores</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" style="background:var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Características</h2>
+        <p>Funcionalidades principales del sistema</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="icon feat-blue"><i class="fas fa-users"></i></div>
+          <h3>Gestión de Clientes</h3>
+          <p>Registro, consulta y administración de datos de clientes de forma centralizada.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="icon feat-green"><i class="fas fa-truck"></i></div>
+          <h3>Gestión de Vehículos</h3>
+          <p>Catálogo completo con marcas, modelos, años y disponibilidad de stock.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="icon feat-cyan"><i class="fas fa-file-invoice-dollar"></i></div>
+          <h3>Registro de Ventas</h3>
+          <p>Seguimiento detallado de cada transacción con datos del comprador y vehículo.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="icon feat-purple"><i class="fas fa-credit-card"></i></div>
+          <h3>Gestión de Pagos</h3>
+          <p>Control de pagos, cuotas y estados financieros por venta realizada.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="icon feat-orange"><i class="fas fa-database"></i></div>
+          <h3>Persistencia de Datos</h3>
+          <p>Almacenamiento robusto con MySQL y PostgreSQL para alta disponibilidad.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="icon feat-red"><i class="fab fa-docker"></i></div>
+          <h3>Arquitectura en Contenedores</h3>
+          <p>Servicios dockerizados para despliegue rápido, aislado y reproducible.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section id="architecture">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Arquitectura del Sistema</h2>
+        <p>Flujo de comunicación entre servicios</p>
+      </div>
+      <div class="arch-diagram reveal">
+        <div class="arch-node">
+          <i class="fas fa-user"></i>
+          <div class="label">Usuario</div>
+          <div class="sub">Navegador / Cliente</div>
+        </div>
+        <div class="arch-arrow"><i class="fas fa-arrow-down"></i></div>
+        <div class="arch-node" style="border-color:rgba(0,153,0,0.3);">
+          <i class="fas fa-server" style="color:#00cc44;"></i>
+          <div class="label">Nginx</div>
+          <div class="sub">Proxy inverso · Puerto 80</div>
+        </div>
+        <div class="arch-arrow"><i class="fas fa-arrow-down"></i></div>
+        <div class="arch-split">
+          <div class="arch-node">
+            <i class="fab fa-php" style="color:#8892bf;"></i>
+            <div class="label">PHP</div>
+            <div class="sub">Apache Backend</div>
+          </div>
+          <div class="arch-node">
+            <i class="fab fa-node-js" style="color:#3cc573;"></i>
+            <div class="label">Node.js</div>
+            <div class="sub">API REST · Puerto 3000</div>
+          </div>
+        </div>
+        <div class="arch-arrow"><i class="fas fa-arrow-down"></i></div>
+        <div class="arch-merge">
+          <div class="arch-node">
+            <i class="fas fa-database" style="color:#00758f;"></i>
+            <div class="label">MySQL 8</div>
+            <div class="sub">Base de datos relacional</div>
+          </div>
+          <div class="arch-node">
+            <i class="fas fa-database" style="color:#336791;"></i>
+            <div class="label">PostgreSQL 16</div>
+            <div class="sub">Base de datos relacional</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section id="stats" style="background:var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Estadísticas del Sistema</h2>
+        <p>Datos de ejemplo del ecosistema</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card reveal">
+          <i class="fas fa-tag"></i>
+          <div class="number" data-target="5">0</div>
+          <div class="label">Marcas registradas</div>
+        </div>
+        <div class="stat-card reveal">
+          <i class="fas fa-car"></i>
+          <div class="number" data-target="5">0</div>
+          <div class="label">Vehículos registrados</div>
+        </div>
+        <div class="stat-card reveal">
+          <i class="fas fa-user-friends"></i>
+          <div class="number" data-target="3">0</div>
+          <div class="label">Clientes registrados</div>
+        </div>
+        <div class="stat-card reveal">
+          <i class="fas fa-file-invoice"></i>
+          <div class="number" data-target="3">0</div>
+          <div class="label">Ventas registradas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="brand"><i class="fas fa-car"></i> Vehicle Sales System</div>
+      <div class="tagline">Plataforma de gestión y administración de ventas de vehículos</div>
+      <div class="footer-icons">
+        <div class="item"><i class="fas fa-graduation-cap"></i><span>Proyecto académico</span></div>
+        <div class="item"><i class="fab fa-aws"></i><span>AWS EC2</span></div>
+        <div class="item"><i class="fab fa-docker"></i><span>Docker</span></div>
+      </div>
+      <div class="copy">&copy; 2026 Vehicle Sales System &mdash; Todos los derechos reservados</div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Navbar scroll effect ──
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // ── Scroll reveal ──
+    const revealElements = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    revealElements.forEach(el => observer.observe(el));
+
+    // ── Counter animation ──
+    const counters = document.querySelectorAll('.number[data-target]');
+    let countersAnimated = false;
+
+    function animateCounters() {
+      if (countersAnimated) return;
+      countersAnimated = true;
+
+      counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-target'), 10);
+        const duration = 1200;
+        const startTime = performance.now();
+
+        function update(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.floor(eased * target);
+          counter.textContent = current;
+          if (progress < 1) {
+            requestAnimationFrame(update);
+          } else {
+            counter.textContent = target;
+          }
+        }
+
+        requestAnimationFrame(update);
+      });
+    }
+
+    // ── Trigger counters when stats section is visible ──
+    const statsSection = document.getElementById('stats');
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounters();
+          statsObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    statsObserver.observe(statsSection);
+  </script>
+</body>
+</html>
